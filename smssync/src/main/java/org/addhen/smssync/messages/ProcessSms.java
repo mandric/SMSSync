@@ -17,7 +17,6 @@
 
 package org.addhen.smssync.messages;
 
-import org.addhen.smssync.MainApplication;
 import org.addhen.smssync.Prefs;
 import org.addhen.smssync.R;
 import org.addhen.smssync.models.Message;

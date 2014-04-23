@@ -158,7 +158,7 @@ public class ProcessMessage {
                                 + jsonObject.getString("message"));
 
                         processSms.sendSms(jsonObject.getString("to"),
-                                jsonObject.getString("message"));
+                                jsonObject.getString("message"), jsonObject.getString("uuid"));
                     }
 
                 }
