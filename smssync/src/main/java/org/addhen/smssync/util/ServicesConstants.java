@@ -52,4 +52,10 @@ public class ServicesConstants {
     public static final int INACTIVE_SYNC_URL = 1;
 
     public static final String DEFAULT_SMS_PROVIDER = "org.addhen.smssync.defaultsmsprovider";
+
+    public static final String SENT_SMS_BUNDLE = "sent";
+
+    public static final String DELIVERED_SMS_BUNDLE = "delivered";
+
+    public static final String TASK_SENT_URL_PARAM = "?task=sent";
 }

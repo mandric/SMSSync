@@ -19,13 +19,14 @@ package org.addhen.smssync.models;
 
 import org.addhen.smssync.database.Database;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Holds the messages to be sent via HTTP request
  */
-public class Message extends Model {
+public class Message extends Model implements Serializable {
 
     private String body;
 

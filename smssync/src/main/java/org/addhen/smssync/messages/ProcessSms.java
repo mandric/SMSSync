@@ -339,13 +339,18 @@ public class ProcessSms {
         return UUID.randomUUID().toString();
     }
 
+    public void sendSms(String sendTo, String msg) {
+        sendSms(sendTo, msg, null);
+    }
+
     /**
      * Sends SMS to a number.
      *
      * @param sendTo - Number to send SMS to.
      * @param msg    - The message to be sent.
+     * @param uuid   - UUID from web server
      */
-    public void sendSms(String sendTo, String msg) {
+    public void sendSms(String sendTo, String msg, String uuid) {
 
         ArrayList<PendingIntent> sentIntents = new ArrayList<PendingIntent>();
         ArrayList<PendingIntent> deliveryIntents = new ArrayList<PendingIntent>();
@@ -356,13 +361,27 @@ public class ProcessSms {
 
         SmsManager sms = SmsManager.getDefault();
         ArrayList<String> parts = sms.divideMessage(msg);
-
+        String validUUID;
+        if (null == uuid || "".equals(uuid)) {
+            validUUID = getUuid();
+        } else {
+            validUUID = uuid;
+        }
         for (int i = 0; i < parts.size(); i++) {
-            PendingIntent sentIntent = PendingIntent.getBroadcast(context, 0,
-                    new Intent(ServicesConstants.SENT), 0);
+            Message message = new Message();
+            message.setBody(msg);
+            message.setFrom(sendTo);
+            message.setUuid(validUUID);
 
+            Intent sentMessageIntent = new Intent(ServicesConstants.SENT);
+            sentMessageIntent.putExtra(ServicesConstants.SENT_SMS_BUNDLE, message);
+            PendingIntent sentIntent = PendingIntent.getBroadcast(context,
+                    0, sentMessageIntent, 0);
+
+            Intent delivered = new Intent(ServicesConstants.DELIVERED);
+            delivered.putExtra(ServicesConstants.DELIVERED_SMS_BUNDLE, message);
             PendingIntent deliveryIntent = PendingIntent.getBroadcast(context,
-                    0, new Intent(ServicesConstants.DELIVERED), 0);
+                    0, delivered, 0);
             sentIntents.add(sentIntent);
 
             deliveryIntents.add(deliveryIntent);
@@ -384,6 +403,7 @@ public class ProcessSms {
             message.setBody(msg);
             message.setTimestamp(timeMills.toString());
             message.setFrom(sendTo);
+            message.setUuid(validUUID);
             postToSentBox(message, TASK);
         }
     }
