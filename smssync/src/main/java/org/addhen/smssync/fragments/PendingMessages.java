@@ -25,12 +25,9 @@ import org.addhen.smssync.Prefs;
 import org.addhen.smssync.R;
 import org.addhen.smssync.SyncDate;
 import org.addhen.smssync.adapters.PendingMessagesAdapter;
-import org.addhen.smssync.controllers.MessageResultsController;
 import org.addhen.smssync.listeners.PendingMessagesActionModeListener;
 import org.addhen.smssync.messages.ProcessSms;
 import org.addhen.smssync.models.Message;
-import org.addhen.smssync.models.SyncUrl;
-import org.addhen.smssync.net.MainHttpClient;
 import org.addhen.smssync.services.SyncPendingMessagesService;
 import org.addhen.smssync.tasks.ProgressTask;
 import org.addhen.smssync.tasks.SyncType;
@@ -38,13 +35,9 @@ import org.addhen.smssync.tasks.TaskCanceled;
 import org.addhen.smssync.tasks.state.State;
 import org.addhen.smssync.tasks.state.SyncPendingMessagesState;
 import org.addhen.smssync.tasks.state.SyncState;
-import org.addhen.smssync.util.MessageResult;
 import org.addhen.smssync.util.ServicesConstants;
 import org.addhen.smssync.util.Util;
 import org.addhen.smssync.views.PendingMessagesView;
-import org.apache.http.HttpStatus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -77,8 +70,6 @@ public class PendingMessages
     private LinkedHashSet<Integer> mSelectedItemsPositions;
 
     private PendingMessagesActionModeListener multichoiceActionModeListener;
-
-    private MessageResultsController mMessageResultsController;
 
     /**
      * This will refresh content of the listview aka the pending messages when smssync successfully
@@ -132,7 +123,6 @@ public class PendingMessages
                     break;
             }
 
-            mMessageResultsController.sentNotificationToWebService(intent, result, resultMessage, ServicesConstants.SENT_SMS_BUNDLE);
         }
     };
 
@@ -156,7 +146,6 @@ public class PendingMessages
                     break;
             }
 
-            mMessageResultsController.sentNotificationToWebService(intent, result, resultMessage, ServicesConstants.DELIVERED_SMS_BUNDLE);
         }
     };
 
@@ -196,7 +185,6 @@ public class PendingMessages
         view.sync.setOnClickListener(this);
 
         MainApplication.bus.register(this);
-        mMessageResultsController = new MessageResultsController(this.getActivity());
     }
 
     @Override

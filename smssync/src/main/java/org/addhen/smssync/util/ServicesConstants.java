@@ -57,5 +57,4 @@ public class ServicesConstants {
 
     public static final String DELIVERED_SMS_BUNDLE = "delivered";
 
-    public static final String TASK_SENT_URL_PARAM = "?task=sent";
 }
