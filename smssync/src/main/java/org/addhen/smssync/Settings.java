@@ -69,6 +69,8 @@ public class Settings extends SherlockPreferenceActivity implements
 
     public static final String TASK_CHECK_TIMES = "task_check_times";
 
+    public static final String MESSAGE_DELIVERY_API = "message_delivery_api_preference";
+
     public static final String ABOUT = "powered_preference";
 
     private EditTextPreference replyPref;
@@ -82,6 +84,8 @@ public class Settings extends SherlockPreferenceActivity implements
     private CheckBoxPreference autoSync;
 
     private CheckBoxPreference taskCheck;
+
+    private CheckBoxPreference enableMessageDeliveryAPI;
 
     private ListPreference autoSyncTimes;
 
@@ -170,6 +174,9 @@ public class Settings extends SherlockPreferenceActivity implements
                 TASK_CHECK_TIMES);
         taskCheckTimes.setEntries(autoSyncEntries);
         taskCheckTimes.setEntryValues(autoSyncValues);
+
+        enableMessageDeliveryAPI = (CheckBoxPreference) getPreferenceScreen().findPreference(
+                MESSAGE_DELIVERY_API);
 
         about = (Preference) getPreferenceScreen().findPreference(ABOUT);
 
@@ -393,6 +400,18 @@ public class Settings extends SherlockPreferenceActivity implements
             if (uniqueIdValidityStatus == 0) {
                 editor.putString("UniqueId", uniqueId.getText());
             }
+        }
+
+        editor.putBoolean("MessageDeliveryAPIEnable", enableMessageDeliveryAPI.isChecked());
+        if (Prefs.messageDeliveryAPIEnable != enableMessageDeliveryAPI.isChecked()) {
+            boolean checked = enableMessageDeliveryAPI.isChecked() ? true : false;
+            String check = getCheckedStatus(checked);
+
+            String status = getCheckedStatus(Prefs.messageDeliveryAPIEnable);
+
+            Util.logActivities(Settings.this, getString(R.string.settings_changed,
+                    enableMessageDeliveryAPI.getTitle().toString(), status,
+                    check));
         }
         editor.commit();
     }
