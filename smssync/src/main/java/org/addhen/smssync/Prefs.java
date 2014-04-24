@@ -65,6 +65,8 @@ public class Prefs {
 
     public static int batteryLevel = 0;
 
+    public static Boolean messageDeliveryAPIEnable = false;
+
     /**
      * Load the value of the settings / preference variable.
      *
@@ -94,6 +96,7 @@ public class Prefs {
         enableWhitelist = settings.getBoolean("EnableWhitelist", false);
         enableLog = settings.getBoolean("EnableLog", false);
         batteryLevel = settings.getInt("BatteryLevel", 0);
+        messageDeliveryAPIEnable = settings.getBoolean("MessageDeliveryAPIEnable", false);
     }
 
     /**
@@ -119,6 +122,13 @@ public class Prefs {
         editor.putBoolean("EnableWhitelist", enableWhitelist);
         editor.putBoolean("EnableLog", enableLog);
         editor.putInt("BatteryLevel", batteryLevel);
+        editor.putBoolean("MessageDeliveryAPIEnable", messageDeliveryAPIEnable);
         editor.commit();
+    }
+
+    public static Boolean isMessageDeliveryApiEnabled(Context context) {
+        final SharedPreferences settings = context.getSharedPreferences(
+                PREF_NAME, 0);
+        return settings.getBoolean("MessageDeliveryAPIEnable", false);
     }
 }
