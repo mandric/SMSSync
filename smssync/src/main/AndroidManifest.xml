@@ -45,7 +45,9 @@
         <service android:name="org.addhen.smssync.services.CheckTaskScheduledService" />
         <service android:name="org.addhen.smssync.services.CheckTaskService" />
         <service android:name="org.addhen.smssync.services.SyncPendingMessagesService" />
+        <service android:name=".services.MessageResultsScheduledService" />
         <service android:name="org.addhen.smssync.widget.SmsSyncAppWidgetProvider$SmsSyncAppWidgetService" />
+
 
         <!-- activities -->
         <activity
@@ -167,6 +169,9 @@
 
         <!-- auto sync scheduled -->
         <receiver android:name="org.addhen.smssync.receivers.AutoSyncScheduledReceiver" />
+
+        <!-- message delivery scheduled -->
+        <receiver android:name=".receivers.MessageResultsScheduledReceiver" />
 
         <!-- app widget provider -->
         <receiver
