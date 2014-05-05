@@ -18,9 +18,7 @@
 package org.addhen.smssync;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
-import com.squareup.otto.Produce;
 
-import org.addhen.smssync.util.Logger;
 import org.addhen.smssync.util.RunServicesUtil;
 import org.addhen.smssync.util.Util;
 
@@ -69,7 +67,7 @@ public class Settings extends SherlockPreferenceActivity implements
 
     public static final String TASK_CHECK_TIMES = "task_check_times";
 
-    public static final String MESSAGE_DELIVERY_API = "message_delivery_api_preference";
+    public static final String MESSAGE_RESULTS_API = "message_results_api_preference";
 
     public static final String ABOUT = "powered_preference";
 
@@ -85,7 +83,7 @@ public class Settings extends SherlockPreferenceActivity implements
 
     private CheckBoxPreference taskCheck;
 
-    private CheckBoxPreference enableMessageDeliveryAPI;
+    private CheckBoxPreference enableMessageResultsAPI;
 
     private ListPreference autoSyncTimes;
 
@@ -175,8 +173,8 @@ public class Settings extends SherlockPreferenceActivity implements
         taskCheckTimes.setEntries(autoSyncEntries);
         taskCheckTimes.setEntryValues(autoSyncValues);
 
-        enableMessageDeliveryAPI = (CheckBoxPreference) getPreferenceScreen().findPreference(
-                MESSAGE_DELIVERY_API);
+        enableMessageResultsAPI = (CheckBoxPreference) getPreferenceScreen().findPreference(
+                MESSAGE_RESULTS_API);
 
         about = (Preference) getPreferenceScreen().findPreference(ABOUT);
 
@@ -402,15 +400,15 @@ public class Settings extends SherlockPreferenceActivity implements
             }
         }
 
-        editor.putBoolean("MessageDeliveryAPIEnable", enableMessageDeliveryAPI.isChecked());
-        if (Prefs.messageDeliveryAPIEnable != enableMessageDeliveryAPI.isChecked()) {
-            boolean checked = enableMessageDeliveryAPI.isChecked() ? true : false;
+        editor.putBoolean("MessageResultsAPIEnable", enableMessageResultsAPI.isChecked());
+        if (Prefs.messageResultsAPIEnable != enableMessageResultsAPI.isChecked()) {
+            boolean checked = enableMessageResultsAPI.isChecked() ? true : false;
             String check = getCheckedStatus(checked);
 
-            String status = getCheckedStatus(Prefs.messageDeliveryAPIEnable);
+            String status = getCheckedStatus(Prefs.messageResultsAPIEnable);
 
             Util.logActivities(Settings.this, getString(R.string.settings_changed,
-                    enableMessageDeliveryAPI.getTitle().toString(), status,
+                    enableMessageResultsAPI.getTitle().toString(), status,
                     check));
         }
         editor.commit();
@@ -516,8 +514,30 @@ public class Settings extends SherlockPreferenceActivity implements
             RunServicesUtil.runCheckTaskService(Settings.this);
         }
 
+        // Enable message result checking
+        if (key.equals(MESSAGE_RESULTS_API)) {
+            if (sharedPreferences.getBoolean(MESSAGE_RESULTS_API, false)) {
+                messageResultsAPIEnable();
+            } else {
+                RunServicesUtil.stopMessageResultsService(Settings.this);
+            }
+        }
         this.savePreferences();
     }
+
+    final Runnable mMessageResultsAPIEnabled = new Runnable() {
+
+        public void run() {
+
+            if (!Prefs.enabled) {
+                Util.showToast(Settings.this, R.string.no_configured_url);
+                enableMessageResultsAPI.setChecked(false);
+            } else {
+                enableMessageResultsAPI.setChecked(true);
+                RunServicesUtil.runMessageResultsService(Settings.this);
+            }
+        }
+    };
 
     /**
      * Create runnable for validating callback URL. Putting the validation
@@ -591,6 +611,15 @@ public class Settings extends SherlockPreferenceActivity implements
         Thread t = new Thread() {
             public void run() {
                 mHandler.post(mAutoSyncEnabled);
+            }
+        };
+        t.start();
+    }
+
+    public void messageResultsAPIEnable() {
+        Thread t = new Thread() {
+            public void run() {
+                mHandler.post(mMessageResultsAPIEnabled);
             }
         };
         t.start();
